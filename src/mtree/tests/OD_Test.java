@@ -142,6 +142,7 @@ public class OD_Test {
 //        Collections.sort(r_list);
 //        Collections.sort(k_list);
 //        Collections.sort(k_list, Collections.reverseOrder());
+        //Vary R, k
         for(int i =0 ; i < num_W; i++){
 //            double r = 1.9;
 //            double r = 1.9/2 + 1.9*1.5*random.nextDouble();
@@ -170,19 +171,12 @@ public class OD_Test {
             int w = 10000;
 //            int slide = 1600 + random.nextInt(150)*200;
             int slide = 500;
-//            int w = 2000 + random.nextInt(150)*2000;
-//            int slide = 16000 + random.nextInt(150)*2000;
-            cmqn.add_query(new OD_Query(r, k, w, slide));
-            cmsc.add_query(new OD_Query(r, k, w, slide));
             multi_cpod.add_query(new OD_Query(r, k, w, slide));
             sop.add_query(new OD_Query(r, k, w, slide));
-//            new_cpod4.add_query(new OD_Query(r, k, w, slide));
-//            new_cpod5.add_query(new OD_Query(r, k, w, slide));
             cpmod_r.add_query(new OD_Query(r, k, w, slide));
             cpmod_s.add_query(new OD_Query(r, k, w, slide));
             cpmod_rd.add_query(new OD_Query(r, k, w, slide));
             cpmod_sd.add_query(new OD_Query(r, k, w, slide));
-//            new_cpod10.add_query(new OD_Query(r, k, w, slide));
             mcsky.add_query(new OD_Query(r, k, w, slide));
         }
 
@@ -217,6 +211,12 @@ public class OD_Test {
             else if("cpmod_rd".equals(algorithm)){
                 result = cpmod_rd.slide_process(incomingData, currentTime);
             }
+            else if("cpmod_r".equals(algorithm)){
+                result = cpmod_r.slide_process(incomingData, currentTime);
+            }
+            else if("cpmod_s".equals(algorithm)){
+                result = cpmod_s.slide_process(incomingData, currentTime);
+            }
             else if("multi_cpod".equals(algorithm)){
                 result = multi_cpod.slide_process(incomingData, currentTime);
             }
@@ -227,6 +227,7 @@ public class OD_Test {
             else if("pmcsky".equals(algorithm)){
                 result = mcsky.slide_process(incomingData, currentTime);
             }
+            
 
 
             double elapsedTimeInSec = (Utils.getCPUTime() - start) * 1.0 / 1000000000;
