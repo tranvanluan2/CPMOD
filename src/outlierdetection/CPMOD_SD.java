@@ -135,28 +135,13 @@ public class CPMOD_SD {
 
             }
 
-//            ArrayList<C_Data> first_slide = all_slides.get(current_slides.get(0));
-//            if (first_slide.get(0).arrivalTime != currentTime + 1 - Constants.W) {
-//                System.out.println("Not right!");
-//                System.out.println("First data arrival time = " + first_slide.get(0).arrivalTime);
-//                System.out.println("Current time + 1- w = " + (currentTime + 1 - Constants.W));
-//
-//            }
             processExpiredData(expiredSlideIndex);
             long start = Utils.getCPUTime();
             if (data.size() == Constants.W) {
                 for (int sIdx : current_slides) {
                     selectAllCore(sIdx, all_sorted_r);
                 }
-//                for (CorePoint c : all_distinct_core_point) {
-//                    for (Double r : all_sorted_r) {
-//                        if (r <= c.max_support_r) {
-//                            c.computeTotalHalfRPoints(r);
-//                        } else {
-//                            break;
-//                        }
-//                    }
-//                }
+
             } else {
                 newestSlide = current_slides.get(current_slides.size() - 1);
                 int start_slide = last_report_slide + 1;
@@ -222,23 +207,7 @@ public class CPMOD_SD {
                         }
 
                     }
-//                    ArrayList<OD_Query> need_prob_queries = new ArrayList<>();
-//                    for (OD_Query q : all_queries) {
-//                        //check with core points
-//                        if (currentTime - q.W < d.arrivalTime
-//                                && (currentTime - Constants.W) / q.S * q.S == (currentTime - Constants.W)) {
-//                            if (!d.safeInlierQueries.contains(q) && d.total_neighbor(q.R, q.W) < q.k) {
-//                                //find core in half r 
-//                                CorePoint c = findCorePointInRangeR2(d, q.R, sIdx);
-//                                if (c == null || !c.enoughPointsInHalfR(q.R, q.W, q.k)) {
-//                                    need_prob_queries.add(q);
-//                                }
-//                            }
-//                        }
-//                    }
 
-//                    filterRequestTime += (Utils.getCPUTime() - start) * 1.0 / 1000000000;
-//                    start = Utils.getCPUTime();
                     //compute k max and r-w map
                     Integer k_max = all_sorted_k.get(all_sorted_k.size() - 1);
                     TreeMap<Double, TreeMap<Integer, ArrayList<OD_Query>>> r_w_map = convertToRWMap(need_prob_queries);
@@ -328,40 +297,9 @@ public class CPMOD_SD {
 
                     }
 
-//                    for (int idx = newestSlide; idx > expiredSlideIndex; idx--) {
-//                        if (r_w_map.keySet().isEmpty()) {
-//                            break;
-//                        }
-//                        Double max_r = r_w_map.lastKey();
-//                        Double min_r = r_w_map.firstKey();
-//
-//                        if (d.lastProbRadius.containsKey(idx) && d.lastProbRadius.get(idx) >= max_r
-//                                && !(idx == last_report_slide && isOverlappingSlide)) {
-//
-//                        } else {
-//                            probe_slide(d, idx, max_r, min_r, k_max, r_neighbor_count.get(min_r));
-//                            TreeMap<Double, Integer> neighborCountMap = d.get_neighbor_count(d.neighborCount.get(idx),
-//                                    new ArrayList<>(r_w_map.keySet()));
-//                            for (Double r : new ArrayList<>(r_w_map.keySet())) {
-////                                int n = d.get_neighbor_count(d.neighborCount.get(idx), r);
-//                                int n = neighborCountMap.get(r);
-//                                r_neighbor_count.put(r, r_neighbor_count.get(r) + n);
-//                                if (idx >= d.sIndex) {
-//                                    r_suc_neighbor_count.put(r, r_suc_neighbor_count.get(r) + n);
-//                                }
-//                                checkInlier(r_w_map, r, idx, result, d, r_neighbor_count, r_suc_neighbor_count);
-//                            }
-//                        }
-//
-//                    }
-//                    findNeighborTime += (Utils.getCPUTime() - start) * 1.0 / 1000000000;
                 }
             }
 
-//            System.out.println("Time for filtering requests = " + filterRequestTime);
-//            System.out.println("Time for finding neighbors  = " + findNeighborTime);
-//            System.out.println("Time for using Core = " + useCoreTime);
-//            System.out.println("Time for checkDomiated  = " + checkDominated);
             last_report_slide = newestSlide;
             isOverlappingSlide = false;
             last_report_time = currentTime;
@@ -473,27 +411,6 @@ public class CPMOD_SD {
             }
 
         }
-//        } 
-//        else if (d.lastProbRadius.get(sIdx) < max_r && d.lastProbCore.get(sIdx) != null) {
-//
-//            CorePoint c = d.lastProbCore.get(sIdx);
-//            double distance = DistanceFunction.euclideanDistance(d, c);
-//            lastR = d.lastProbRadius.get(sIdx);
-//            double lowerbound = lastR / 2;
-//            if (distance <= lastR / 2) {
-//                lowerbound = lastR / 2;
-//            }
-//            //else if (distance <= lastR) {
-//            //  lowerbound = 2 * lastR;
-//            //}
-//            if (distance <= max_r / 2) {
-//                //grab close neighbor in range R/2 of c
-//                possibleCandidates.addAll(c.getDataInRange(lowerbound, 1.5 * max_r, sIdx));
-//            } else if (distance <= max_r) {
-//                possibleCandidates.addAll(c.getDataInRange(lowerbound, 2 * max_r, sIdx));
-//            }
-//
-//        }
 
         outer:
         for (Bin ps : possibleCandidates) {
@@ -537,128 +454,7 @@ public class CPMOD_SD {
         d.lastProbRadius.put(sIdx, max_r);
     }
 
-//    private ArrayList<OD_Query> probe_r_k(C_Data d, int newestSlide, int oldestSlide,
-//            ArrayList<OD_Query> need_prob_queries) {
-//        ArrayList<OD_Query> outlierQueries = new ArrayList<>();
-//        TreeMap<Double, ArrayList<OD_Query>> queryMap = convertToMap(need_prob_queries);
-//        ArrayList<Double> all_r = new ArrayList<>(queryMap.keySet());
-//        int k_max = -1;
-//        for (OD_Query q : need_prob_queries) {
-//            if (q.k > k_max) {
-//                k_max = q.k;
-//            }
-//        }
-//        while (!all_r.isEmpty()) {
-//            int selected_idx = 0;
-//            Double r = all_r.get(selected_idx);
-//            int k = queryMap.get(r).get(0).k; //max k
-//            boolean isInlier = false;
-//            boolean safeInlier = false;
-//            int cur_neighbor = d.neighborCount(r, oldestSlide);
-//            int cur_suc_neighbor = d.sucNeighborCount(r);
-//            if (cur_neighbor >= k) {
-//                isInlier = true;
-//                if (cur_suc_neighbor >= k) {
-//                    safeInlier = true;
-//                }
-//            }
-//
-//            //probe right 
-//            if (!isInlier) {
-//                for (int sIdx = d.sIndex; sIdx <= newestSlide; sIdx++) {
-//                    if (d.lastProbRadius.containsKey(sIdx) && d.lastProbRadius.get(sIdx) >= r) {
-//                        continue;
-//                    }
-//                    int[] ns = probe_slide(d, sIdx, r, k_max, cur_neighbor, cur_suc_neighbor);
-//                    cur_neighbor = ns[0];
-//                    cur_suc_neighbor = ns[1];
-//                    //check inlier 
-//                    if (cur_neighbor >= k) {
-//                        isInlier = true;
-//                        //check safe inlier
-//                        if (cur_suc_neighbor >= k) {
-//                            safeInlier = true;
-//                            for (OD_Query q : queryMap.get(r)) {
-//                                d.safeInlierQueries.add(q);
-//                            }
-//                        }
-//                        break;
-//                    }
-//
-//                }
-//            }
-//            //probe left if not inlier
-//            if (!isInlier) {
-//                for (int sIdx = d.sIndex - 1; sIdx >= oldestSlide; sIdx--) {
-//                    if (d.lastProbRadius.containsKey(sIdx) && d.lastProbRadius.get(sIdx) >= r) {
-//                        continue;
-//                    }
-//                    int[] ns = probe_slide(d, sIdx, r, k_max, cur_neighbor, cur_suc_neighbor);
-//                    cur_neighbor = ns[0];
-//                    cur_suc_neighbor = ns[1];
-//                    //check inlier 
-//                    if (cur_neighbor >= k) {
-//                        isInlier = true;
-//                        break;
-//                    }
-//
-//                }
-//            }
-//
-//            if (isInlier) {
-//                if (safeInlier) {
-//
-//                    for (Double largerR : all_r.subList(selected_idx + 1, all_r.size())) {
-//
-//                        for (OD_Query q : queryMap.get(largerR)) {
-//                            if (q.k <= k) {
-//                                d.safeInlierQueries.add(q);
-//                            }
-//                        }
-//
-//                    }
-//                }
-//                for (int r_idx = all_r.size() - 1; r_idx > selected_idx; r_idx--) {
-//                    Double largerR = all_r.get(r_idx);
-//                    if (k >= queryMap.get(largerR).get(0).k) {
-//                        all_r.remove(r_idx);
-//                    }
-//                }
-//
-//            } else {
-//                for (OD_Query q : queryMap.get(r)) {
-//                    if (q.k >= cur_neighbor) {
-//                        outlierQueries.add(q);
-//                    } else {
-//                        break;
-//                    }
-//                }
-//                for (int r_idx = selected_idx - 1; r_idx >= 0; r_idx--) {
-//                    Double smallerR = all_r.get(r_idx);
-//                    int smallestK = queryMap.get(smallerR).get(queryMap.get(smallerR).size() - 1).k;
-//                    if (smallerR < r && smallestK >= k) {
-//
-//                        for (OD_Query q : queryMap.get(smallerR)) {
-//
-//                            outlierQueries.add(q);
-//
-//                        }
-//                        all_r.remove(r_idx);
-//                    }
-//                }
-//            }
-//            all_r.remove(r);
-//
-//        }
-//        return outlierQueries;
-//    }
-//    private ArrayList<OD_Query> probe(C_Data d, int newestSlide, ArrayList<OD_Query> need_prob_queries) {
-//        ArrayList<OD_Query> outlierQueries = new ArrayList<>();
-//        TreeMap<Double, TreeMap<Integer, TreeMap<Integer, ArrayList<OD_Query>>>> queryMapRKW
-//                = convertToRKW(need_prob_queries);
-//
-//        return outlierQueries;
-//    }
+
     public Double getMatchRadius(double distance, ArrayList<Double> all_rs) {
         if (distance <= all_rs.get(0)) {
             return all_rs.get(0);
@@ -679,16 +475,6 @@ public class CPMOD_SD {
         return all_rs.get(high);
     }
 
-//    private TreeMap<Double, ArrayList<OD_Query>> convertToMap(ArrayList<OD_Query> need_prob_queries) {
-//        TreeMap<Double, ArrayList<OD_Query>> result = new TreeMap<>();
-//        for (OD_Query q : need_prob_queries) {
-//            if (!result.containsKey(q.R)) {
-//                result.put(q.R, new ArrayList<>());
-//            }
-//            result.get(q.R).add(q);
-//        }
-//        return result;
-//    }
     private TreeMap<Double, TreeMap<Integer, TreeMap<Integer, ArrayList<OD_Query>>>> convertToRKW(ArrayList<OD_Query> need_prob_queries) {
         TreeMap<Double, TreeMap<Integer, TreeMap<Integer, ArrayList<OD_Query>>>> results = new TreeMap<>();
         for (OD_Query q : need_prob_queries) {
@@ -707,55 +493,10 @@ public class CPMOD_SD {
 
     }
 
-//    private TreeMap<Double, TreeMap<Integer, TreeMap<Integer, ArrayList<OD_Query>>>> convertToRKW(HashSet<OD_Query> need_prob_queries) {
-//        TreeMap<Double, TreeMap<Integer, TreeMap<Integer, ArrayList<OD_Query>>>> results = new TreeMap<>();
-//        for (OD_Query q : need_prob_queries) {
-//            if (!results.containsKey(q.R)) {
-//                results.put(q.R, new TreeMap<>());
-//            }
-//            if (!results.get(q.R).containsKey(q.k)) {
-//                results.get(q.R).put(q.k, new TreeMap<>());
-//            }
-//            if (!results.get(q.R).get(q.k).containsKey(q.W)) {
-//                results.get(q.R).get(q.k).put(q.W, new ArrayList<>());
-//            }
-//            results.get(q.R).get(q.k).get(q.W).add(q);
-//        }
-//        return results;
-//
-//    }
-//    private TreeMap<Integer, ArrayList<OD_Query>> convertToMapR_W(ArrayList<OD_Query> need_prob_queries) {
-//        TreeMap<Integer, ArrayList<OD_Query>> result = new TreeMap<>();
-//        for (OD_Query q : need_prob_queries) {
-//            if (!result.containsKey(q.W)) {
-//                result.put(q.W, new ArrayList<>());
-//            }
-//            result.get(q.W).add(q);
-//        }
-////        for (Integer w : result.keySet()) {
-////            Collections.sort(result.get(w), new RKComparator());
-////        }
-//        return result;
-//    }
     private ResultFindCore findCloseCore(C_Data d, int slideIndex, double radius) {
 
         ArrayList<CorePoint> resultCore = null;
 
-//        if (d.closeCoreMaps_halfR.get(radius) != null
-//                && d.closeCoreMaps_halfR.get(radius).supported_slides.contains(slideIndex)) {
-//            resultCore = new ArrayList<>();
-//            resultCore.add(d.closeCoreMaps_halfR.get(radius));
-//            return new ResultFindCore(DistanceFunction.euclideanDistance(d, d.closeCoreMaps_halfR.get(radius)), resultCore);
-//        } else if (d.closeCoreMaps_R.get(radius) != null) {
-//            CorePoint c = d.closeCoreMaps_R.get(radius);
-//
-//            if (all_core_points_map.get(slideIndex).get(radius).contains(c)) {
-//                resultCore = new ArrayList<>();
-//                resultCore.add(c);
-//                return new ResultFindCore(DistanceFunction.euclideanDistance(d, c), resultCore);
-//            }
-//
-//        }
         ArrayList<CorePoint> corePoints = all_core_points_map.get(slideIndex).get(radius);
 
         ArrayList<CorePoint> inRangeRCores = new ArrayList<>();

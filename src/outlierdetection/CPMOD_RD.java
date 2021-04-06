@@ -135,28 +135,13 @@ public class CPMOD_RD {
 
             }
 
-//            ArrayList<C_Data> first_slide = all_slides.get(current_slides.get(0));
-//            if (first_slide.get(0).arrivalTime != currentTime + 1 - Constants.W) {
-//                System.out.println("Not right!");
-//                System.out.println("First data arrival time = " + first_slide.get(0).arrivalTime);
-//                System.out.println("Current time + 1- w = " + (currentTime + 1 - Constants.W));
-//
-//            }
             processExpiredData(expiredSlideIndex);
             long start = Utils.getCPUTime();
             if (data.size() == Constants.W) {
                 for (int sIdx : current_slides) {
                     selectAllCore(sIdx, all_sorted_r);
                 }
-//                for (CorePoint c : all_distinct_core_point) {
-//                    for (Double r : all_sorted_r) {
-//                        if (r <= c.max_support_r) {
-//                            c.computeTotalHalfRPoints(r);
-//                        } else {
-//                            break;
-//                        }
-//                    }
-//                }
+
             } else {
                 newestSlide = current_slides.get(current_slides.size() - 1);
                 int start_slide = last_report_slide + 1;
@@ -165,24 +150,8 @@ public class CPMOD_RD {
                 }
                 for (int idx = start_slide; idx <= newestSlide; idx++) {
                     selectAllCore(idx, all_sorted_r);
-//                    for (Double r : all_sorted_r) {
-//
-//                        for (CorePoint c : all_core_points_map.get(newestSlide).get(r)) {
-//                            c.computeTotalHalfRPoints(r);
-//
-//                        }
-//
-//                    }
+
                 }
-//                for (CorePoint c : all_distinct_core_point) {
-//                    for (Double r : all_sorted_r) {
-//                        if (r <= c.max_support_r) {
-//                            c.computeTotalHalfRPoints(r);
-//                        } else {
-//                            break;
-//                        }
-//                    }
-//                }
 
             }
 
@@ -204,20 +173,6 @@ public class CPMOD_RD {
             for (Integer sIdx : current_slides) {
                 for (C_Data d : all_slides.get(sIdx)) {
 
-//                    ArrayList<OD_Query> need_prob_queries = new ArrayList<>();
-//                    for (OD_Query q : all_queries) {
-//                        //check with core points
-//                        if (currentTime - q.W < d.arrivalTime
-//                                && (currentTime - Constants.W) / q.S * q.S == (currentTime - Constants.W)) {
-//                            if (!d.safeInlierQueries.contains(q) && d.total_neighbor(q.R, q.W) < q.k) {
-//                                //find core in half r 
-//                                CorePoint c = findCorePointInRangeR2(d, q.R, sIdx);
-//                                if (c == null || !c.enoughPointsInHalfR(q.R, q.W, q.k)) {
-//                                    need_prob_queries.add(q);
-//                                }
-//                            }
-//                        }
-//                    }
                     //check valid and safe inlier queries
                     ArrayList<OD_Query> valid_queries = new ArrayList<>();
                     for (OD_Query q : reportingQueries) {
@@ -259,22 +214,6 @@ public class CPMOD_RD {
 
                     //compute k max and r-w map
                     Integer k_max = all_sorted_k.get(all_sorted_k.size() - 1);
-//                    TreeMap<Double, TreeMap<Integer, ArrayList<OD_Query>>> r_w_map = new TreeMap<>();
-//                    for (OD_Query q : need_prob_queries) {
-//                        if (!r_w_map.containsKey(q.R)) {
-//                            r_w_map.put(q.R, new TreeMap<>());
-//                        }
-//                        if (!r_w_map.get(q.R).containsKey(q.W)) {
-//                            r_w_map.get(q.R).put(q.W, new ArrayList<>());
-//                        }
-//                        r_w_map.get(q.R).get(q.W).add(q);
-//
-//                    }
-//                    for (Double r : r_w_map.keySet()) {
-//                        for (Integer w : r_w_map.get(r).keySet()) {
-//                            Collections.sort(r_w_map.get(r).get(w), new RKComparator());
-//                        }
-//                    }
                     TreeMap<Double, TreeMap<Integer, ArrayList<OD_Query>>> r_w_map = convertToRWMap(need_prob_queries);
                     HashMap<Integer, Integer> neighbor_count_temp = new HashMap<>();
                     HashMap<Integer, Integer> suc_neighbor_count_temp = new HashMap<>();
@@ -286,9 +225,11 @@ public class CPMOD_RD {
                         int total_suc_neighbor = 0;
                         ArrayList<Integer> slide_to_check = new ArrayList<>();
                         boolean isDone = false;
-                        
+
                         for (int idx = newestSlide; idx > expiredSlideIndex; idx--) {
-                            if(r_w_map.get(r) == null) break;
+                            if (r_w_map.get(r) == null) {
+                                break;
+                            }
                             if (d.lastProbRadius.containsKey(idx) && d.lastProbRadius.get(idx) >= r
                                     && !(idx == last_report_slide && isOverlappingSlide)) {
                                 int n = d.get_neighbor_count(d.neighborCount.get(idx), r);
@@ -304,7 +245,7 @@ public class CPMOD_RD {
                                     total_suc_neighbor += n;
                                     suc_neighbor_count_temp.put(idx, n);
                                 }
-                                
+
                                 slide_to_check.add(idx);
                             }
                             if (checkInlier(r_w_map, r, total_neighbor, total_suc_neighbor, idx, d, result)) {
@@ -324,7 +265,7 @@ public class CPMOD_RD {
                                     int idx2 = slide_to_check.get(0);
                                     //discount the temp neighbor count
                                     total_neighbor = total_neighbor - neighbor_count_temp.get(idx2);
-                                    if(idx2 >= d.sIndex){
+                                    if (idx2 >= d.sIndex) {
                                         total_suc_neighbor = total_suc_neighbor - suc_neighbor_count_temp.get(idx2);
                                     }
                                     int[] ns = probe_slide(d, idx2, r, k_max, total_neighbor, total_suc_neighbor, cache);
@@ -358,41 +299,7 @@ public class CPMOD_RD {
                             }
 
                         }
-//                        if (!isDone) {
-//                            for (int idx = newestSlide; idx > expiredSlideIndex; idx--) {
-//                                if (d.lastProbRadius.containsKey(idx) && d.lastProbRadius.get(idx) >= r
-//                                        && !(idx == last_report_slide && isOverlappingSlide)) {
-//
-//                                } else {
-//                                    int[] ns = probe_slide(d, idx, r, k_max, total_neighbor, total_suc_neighbor, cache);
-//                                    total_neighbor = ns[0];
-//                                    total_suc_neighbor = ns[1];
-//
-//                                }
-//                                if (checkInlier(r_w_map, r, total_neighbor, total_suc_neighbor, idx, d, result)) {
-//                                    break;
-//                                } else {
-//                                    for (Integer w : new ArrayList<>(r_w_map.get(r).keySet())) {
-//                                        if (currentTime - w >= all_slides.get(idx).get(0).arrivalTime - 1) {
-//                                            for (OD_Query q : (new ArrayList<>(r_w_map.get(r).get(w)))) {
-//                                                if (!result.containsKey(q)) {
-//                                                    result.put(q, new ArrayList<>());
-//                                                }
-//                                                result.get(q).add(d);
-//                                            }
-//
-//                                            r_w_map.get(r).remove(w);
-//                                            if (r_w_map.get(r).isEmpty()) {
-//                                                r_w_map.remove(r);
-//                                            }
-//
-//                                        }
-//                                    }
-//                                }
-//                            }
-//                        }
 
-//                        }
                     }
 
                 }
@@ -593,7 +500,9 @@ public class CPMOD_RD {
         int case_ = 0;
         ArrayList<Bin> possibleCandidates = new ArrayList<>();
         Double lastR = d.lastProbRadius.get(sIdx);
-        if(lastR == null) lastR = -1.0;
+        if (lastR == null) {
+            lastR = -1.0;
+        }
 
         //find close core
         ResultFindCore rf = findCloseCore(d, sIdx, r);
