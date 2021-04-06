@@ -71,11 +71,11 @@ public class Multi_CPOD {
         all_queries.set(idx, new_q);
     }
 
-    public HashMap<OD_Query, HashSet<Data>> slide_process(ArrayList<Data> data, int _currentTime) {
+    public HashMap<OD_Query, ArrayList<Data>> slide_process(ArrayList<Data> data, int _currentTime) {
 
-        HashMap<OD_Query, HashSet<Data>> result = new HashMap<>();
+        HashMap<OD_Query, ArrayList<Data>> result = new HashMap<>();
         for (OD_Query q : all_queries) {
-            result.put(q, new HashSet<>());
+            result.put(q, new ArrayList<>());
         }
         currentTime = _currentTime;
         ArrayList<C_Data> d_to_process = new ArrayList<>(data.size());

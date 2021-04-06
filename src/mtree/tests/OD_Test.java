@@ -70,7 +70,7 @@ public class OD_Test {
 //        CPOD_ShareCore_5 new_cpod5 = new CPOD_ShareCore_5();
         CPMOD_R cpmod_r = new CPMOD_R();
         CPMOD_S cpmod_s = new CPMOD_S();
-        CPMOD_RD cpmpd_rd = new CPMOD_RD();
+        CPMOD_RD cpmod_rd = new CPMOD_RD();
         CPMOD_SD cpmod_sd = new CPMOD_SD();
 //        CPOD_ShareCore_10 new_cpod10 = new CPOD_ShareCore_10();
         MCSKy mcsky = new MCSKy();
@@ -136,7 +136,7 @@ public class OD_Test {
         
         ArrayList<Double> r_list = new ArrayList<>();
         for(int i = 0; i < num_W; i++){
-            r_list.add(0.028/2 + 0.028*1.5*random.nextDouble());
+            r_list.add(1.9/2 + 1.9*1.5*random.nextDouble());
         }
         
 //        Collections.sort(r_list);
@@ -167,9 +167,9 @@ public class OD_Test {
           //  int k = 50/2 + (int)(50*4*random.nextDouble());
           
 //            int w = 200 + random.nextInt(150) * 200;
-            int w = 100000;
+            int w = 10000;
 //            int slide = 1600 + random.nextInt(150)*200;
-            int slide = 5000;
+            int slide = 500;
 //            int w = 2000 + random.nextInt(150)*2000;
 //            int slide = 16000 + random.nextInt(150)*2000;
             cmqn.add_query(new OD_Query(r, k, w, slide));
@@ -180,29 +180,12 @@ public class OD_Test {
 //            new_cpod5.add_query(new OD_Query(r, k, w, slide));
             cpmod_r.add_query(new OD_Query(r, k, w, slide));
             cpmod_s.add_query(new OD_Query(r, k, w, slide));
-            cpmpd_rd.add_query(new OD_Query(r, k, w, slide));
+            cpmod_rd.add_query(new OD_Query(r, k, w, slide));
             cpmod_sd.add_query(new OD_Query(r, k, w, slide));
 //            new_cpod10.add_query(new OD_Query(r, k, w, slide));
             mcsky.add_query(new OD_Query(r, k, w, slide));
         }
-//        for (Double r : r_list) {
-//            for (Integer k : k_list) {
-//                for (Integer w : w_list) {
-//                    for (Integer slide : s_list) {
-//                        cmqn.add_query(new OD_Query(r, k, w, slide));
-//                        cmsc.add_query(new OD_Query(r, k, w, slide));
-//                        cmqnRK.add_query(new OD_Query(r, k, w, slide));
-//                        sop.add_query(new OD_Query(r, k, w, slide));
-////                        new_cpod.add_query(new OD_Query(r, k, w, slide));
-//                        new_cpod4.add_query(new OD_Query(r, k, w, slide));
-//                        new_cpod5.add_query(new OD_Query(r, k, w, slide));
-//                        mcsky.add_query(new OD_Query(r, k, w, slide));
-//                    }
-//                }
-//            }
-//        }
 
-//        cmqn.add_query(new OD_Query(500, 45));
         double totalTime = 0;
         while (!stop) {
             if (Constants.numberWindow != -1 && numberWindows > Constants.numberWindow) {
@@ -227,19 +210,24 @@ public class OD_Test {
             /**
              * do algorithm
              */
-//            HashMap<OD_Query, HashSet<Data>> result = cmqn.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, HashSet<Data>> result = cmsc.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, HashSet<Data>> result = cmqnRK.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, ArrayList<Data>> result = new_cpod4.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, ArrayList<Data>> result = new_cpod5.slide_process(incomingData, currentTime);
-//          HashMap<OD_Query, ArrayList<Data>> result = new_cpod6.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, ArrayList<Data>> result = new_cpod7.slide_process(incomingData, currentTime);
-//                HashMap<OD_Query, ArrayList<Data>> result = new_cpod8.slide_process(incomingData, currentTime);
-                HashMap<OD_Query, ArrayList<Data>> result = cpmod_sd.slide_process(incomingData, currentTime);
-//                HashMap<OD_Query, ArrayList<Data>> result = new_cpod10.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, HashSet<Data>> result = new_cpod2.slide_process(incomingData, currentTime);
-//            HashMap<OD_Query, ArrayList<Data>> result = mcsky.slide_process(incomingData, currentTime);
-//           HashMap<OD_Query, ArrayList<Data>> result = sop.slide_process(incomingData, currentTime);
+            HashMap<OD_Query, ArrayList<Data>> result = new HashMap<>();
+            if("cpmod_sd".equals(algorithm)){
+                result = cpmod_sd.slide_process(incomingData, currentTime);
+            }
+            else if("cpmod_rd".equals(algorithm)){
+                result = cpmod_rd.slide_process(incomingData, currentTime);
+            }
+            else if("multi_cpod".equals(algorithm)){
+                result = multi_cpod.slide_process(incomingData, currentTime);
+            }
+            else if("sop".equals(algorithm)){
+                result = sop.slide_process(incomingData, currentTime);
+            }
+            
+            else if("pmcsky".equals(algorithm)){
+                result = mcsky.slide_process(incomingData, currentTime);
+            }
+
 
             double elapsedTimeInSec = (Utils.getCPUTime() - start) * 1.0 / 1000000000;
 
@@ -247,18 +235,6 @@ public class OD_Test {
                 totalTime += elapsedTimeInSec;
             }
 
-            for (OD_Query q : result.keySet()) {
-                System.out.println("R = " + q.R + ", k = " + q.k + ", w = " + q.W + ", s = " + q.S + ", #outliers = " + result.get(q).size());
-            }
-            
-            //compute avg outlier rate 
-            int totalOutliers = 0;
-            for(OD_Query q: result.keySet()){
-                totalOutliers += result.get(q).size();
-            }
-            double cur_outlier_rate = totalOutliers*1.0/result.size()/Constants.W;
-            overall_avg_outlier_rate = (overall_avg_outlier_rate * (numberWindows-1) + cur_outlier_rate)/(numberWindows);
-            System.out.println("Overall avg outlier rate = "+ overall_avg_outlier_rate);
             System.out.println("Max memory = " + mesureThread.maxMemory * 1.0 / 1024 / 1024);
             mesureThread.averageTime = totalTime * 1.0 / (numberWindows - 1);
             mesureThread.writeResult();
@@ -270,12 +246,6 @@ public class OD_Test {
         mesureThread.writeResult();
         mesureThread.stop();
         mesureThread.interrupt();
-        System.out.println("Num DCS = " + multi_cpod.numDCS / (numberWindows - 1));
-
-        System.out.println("Time for processing expired slide = " + new_cpod.timeForProcessingExpiredSlide / new_cpod.count);
-        System.out.println("Time for creating core = " + new_cpod.timeForCreatCore / new_cpod.count);
-        System.out.println("Time for finding neighbors = " + new_cpod.timeForFindNeighbors / new_cpod.count);
-
     }
 
     public static double calculateAverage(List<Integer> marks) {
