@@ -21,7 +21,7 @@ import mtree.utils.Utils;
  *
  * @author Luan Tran
  */
-public class CPOD_ShareCore_8 {
+public class CPMOD_R {
 
     public static int currentTime;
 
@@ -571,16 +571,10 @@ public class CPOD_ShareCore_8 {
         if (arrivalTime < 1) {
             return false;
         }
-//        for (Integer s : all_s) {
-//            if ((arrivalTime - 1) / s * s == (arrivalTime - 1)) {
-//                return true;
-//            }
-//        }
-        for (OD_Query q : all_queries) {
-            if ((arrivalTime - 1 + q.W - Constants.W >= 0)
-                    && (arrivalTime - 1 + q.W - Constants.W) / q.S * q.S == (arrivalTime - 1 + q.W - Constants.W)) {
-                return true;
-            }
+
+        if ((arrivalTime - 1 >= 0)
+                && (arrivalTime - 1) / Constants.slide * Constants.slide == (arrivalTime - 1)) {
+            return true;
         }
         return false;
     }

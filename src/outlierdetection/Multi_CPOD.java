@@ -18,7 +18,7 @@ import mtree.utils.Constants;
  *
  * @author luan
  */
-public class CPOD_MQ_Naive_CompareRK {
+public class Multi_CPOD {
 
     public static int currentTime;
 

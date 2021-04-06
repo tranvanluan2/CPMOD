@@ -18,15 +18,15 @@ import java.util.Random;
 import mtree.utils.Constants;
 import mtree.utils.Utils;
 import outlierdetection.CPOD_MQ_Naive;
-import outlierdetection.CPOD_MQ_Naive_CompareRK;
+import outlierdetection.Multi_CPOD;
 import outlierdetection.CPOD_MQ_ShareCore;
 import outlierdetection.CPOD_ShareCore_10;
 import outlierdetection.CPOD_ShareCore_4;
 import outlierdetection.CPOD_ShareCore_5;
-import outlierdetection.CPOD_ShareCore_6;
-import outlierdetection.CPOD_ShareCore_7;
-import outlierdetection.CPOD_ShareCore_8;
-import outlierdetection.CPOD_ShareCore_9;
+import outlierdetection.CPMOD_R;
+import outlierdetection.CPMOD_S;
+import outlierdetection.CPMOD_RD;
+import outlierdetection.CPMOD_SD;
 import outlierdetection.MCSKy;
 import outlierdetection.New_MQ_CPOD;
 import outlierdetection.New_MQ_CPOD_2;
@@ -63,16 +63,16 @@ public class OD_Test {
 
         CPOD_MQ_Naive cmqn = new CPOD_MQ_Naive();
         CPOD_MQ_ShareCore cmsc = new CPOD_MQ_ShareCore();
-        CPOD_MQ_Naive_CompareRK cmqnRK = new CPOD_MQ_Naive_CompareRK();
+        Multi_CPOD multi_cpod = new Multi_CPOD();
         SOP sop = new SOP();
         New_MQ_CPOD new_cpod = new New_MQ_CPOD();
-        CPOD_ShareCore_4 new_cpod4 = new CPOD_ShareCore_4();
-        CPOD_ShareCore_5 new_cpod5 = new CPOD_ShareCore_5();
-        CPOD_ShareCore_6 new_cpod6 = new CPOD_ShareCore_6();
-        CPOD_ShareCore_7 new_cpod7 = new CPOD_ShareCore_7();
-        CPOD_ShareCore_8 new_cpod8 = new CPOD_ShareCore_8();
-        CPOD_ShareCore_9 new_cpod9 = new CPOD_ShareCore_9();
-        CPOD_ShareCore_10 new_cpod10 = new CPOD_ShareCore_10();
+//        CPOD_ShareCore_4 new_cpod4 = new CPOD_ShareCore_4();
+//        CPOD_ShareCore_5 new_cpod5 = new CPOD_ShareCore_5();
+        CPMOD_R cpmod_r = new CPMOD_R();
+        CPMOD_S cpmod_s = new CPMOD_S();
+        CPMOD_RD cpmpd_rd = new CPMOD_RD();
+        CPMOD_SD cpmod_sd = new CPMOD_SD();
+//        CPOD_ShareCore_10 new_cpod10 = new CPOD_ShareCore_10();
         MCSKy mcsky = new MCSKy();
         //create a set of queries
         //fc
@@ -174,15 +174,15 @@ public class OD_Test {
 //            int slide = 16000 + random.nextInt(150)*2000;
             cmqn.add_query(new OD_Query(r, k, w, slide));
             cmsc.add_query(new OD_Query(r, k, w, slide));
-            cmqnRK.add_query(new OD_Query(r, k, w, slide));
+            multi_cpod.add_query(new OD_Query(r, k, w, slide));
             sop.add_query(new OD_Query(r, k, w, slide));
-            new_cpod4.add_query(new OD_Query(r, k, w, slide));
-            new_cpod5.add_query(new OD_Query(r, k, w, slide));
-            new_cpod6.add_query(new OD_Query(r, k, w, slide));
-            new_cpod7.add_query(new OD_Query(r, k, w, slide));
-            new_cpod8.add_query(new OD_Query(r, k, w, slide));
-            new_cpod9.add_query(new OD_Query(r, k, w, slide));
-            new_cpod10.add_query(new OD_Query(r, k, w, slide));
+//            new_cpod4.add_query(new OD_Query(r, k, w, slide));
+//            new_cpod5.add_query(new OD_Query(r, k, w, slide));
+            cpmod_r.add_query(new OD_Query(r, k, w, slide));
+            cpmod_s.add_query(new OD_Query(r, k, w, slide));
+            cpmpd_rd.add_query(new OD_Query(r, k, w, slide));
+            cpmod_sd.add_query(new OD_Query(r, k, w, slide));
+//            new_cpod10.add_query(new OD_Query(r, k, w, slide));
             mcsky.add_query(new OD_Query(r, k, w, slide));
         }
 //        for (Double r : r_list) {
@@ -235,7 +235,7 @@ public class OD_Test {
 //          HashMap<OD_Query, ArrayList<Data>> result = new_cpod6.slide_process(incomingData, currentTime);
 //            HashMap<OD_Query, ArrayList<Data>> result = new_cpod7.slide_process(incomingData, currentTime);
 //                HashMap<OD_Query, ArrayList<Data>> result = new_cpod8.slide_process(incomingData, currentTime);
-                HashMap<OD_Query, ArrayList<Data>> result = new_cpod9.slide_process(incomingData, currentTime);
+                HashMap<OD_Query, ArrayList<Data>> result = cpmod_sd.slide_process(incomingData, currentTime);
 //                HashMap<OD_Query, ArrayList<Data>> result = new_cpod10.slide_process(incomingData, currentTime);
 //            HashMap<OD_Query, HashSet<Data>> result = new_cpod2.slide_process(incomingData, currentTime);
 //            HashMap<OD_Query, ArrayList<Data>> result = mcsky.slide_process(incomingData, currentTime);
@@ -270,7 +270,7 @@ public class OD_Test {
         mesureThread.writeResult();
         mesureThread.stop();
         mesureThread.interrupt();
-        System.out.println("Num DCS = " + cmqnRK.numDCS / (numberWindows - 1));
+        System.out.println("Num DCS = " + multi_cpod.numDCS / (numberWindows - 1));
 
         System.out.println("Time for processing expired slide = " + new_cpod.timeForProcessingExpiredSlide / new_cpod.count);
         System.out.println("Time for creating core = " + new_cpod.timeForCreatCore / new_cpod.count);
