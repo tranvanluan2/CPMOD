@@ -7,3 +7,6 @@ Main class to run experiments is mtree.tests.OD_Test.java with the arguments lik
 where cpmod_rd is the algorithm name, R is default radius threshold, k is default neighbor count threshold, W is the default window size, and slide is the default slide sizes. All these parameters can be changed in main file OD_Test.java for multiple queries. numberWindow is the number of micro-slide, and samplingTime is frequency of CPU and memory sampling. 
 
 
+To get the datasets, extract .rar files such as tao.rar, covtype.rar,...
+
+
